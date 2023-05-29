@@ -26,7 +26,7 @@ class WordTimeClusterReport {
     let sentenceIndex = 0;
 
     for (const sentence of sentences) {
-      const words = removeStopwords(tokenizer.tokenize(sentence));
+      const words = removeStopwords(tokenizer.tokenize(sentence.toLowerCase()));
 
       for (const word of words) {
         if (this.uniqueWords[word] === undefined) {
