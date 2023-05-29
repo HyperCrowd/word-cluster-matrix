@@ -1,6 +1,8 @@
 const math = require('mathjs'); // Import a math library for matrix operations
 const natural = require('natural');
 const { removeStopwords } = require('stopword');
+const { PNG } = require('pngjs');
+const fs = require('fs');
 
 const tokenizer = new natural.WordTokenizer();
 
@@ -15,11 +17,10 @@ class WordTimeClusterReport {
 
     this.timeSentenceMap = new Array(101);
     this.uniqueWords = {};
+    this.maxCluster = 0;
 
     const minTime = math.min(times);
     const maxTime = math.max(times);
-
-    let maxCluster = 0;
 
     // Prepare word-sentence indexes
     let sentenceIndex = 0;
@@ -38,8 +39,8 @@ class WordTimeClusterReport {
         this.uniqueWords[word].count += 1;
         this.uniqueWords[word].sentences.push(sentenceIndex);
 
-        if (this.uniqueWords[word].count > maxCluster) {
-          maxCluster = this.uniqueWords[word].count;
+        if (this.uniqueWords[word].count > this.maxCluster) {
+          this.maxCluster = this.uniqueWords[word].count;
         }
       }
 
@@ -61,7 +62,7 @@ class WordTimeClusterReport {
     }
 
     // Prepare cluster distribution matrix
-    this.matrix = math.zeros(101, 101);
+    this.matrix = math.sparse(math.zeros(101, 101));
     const uniqueWords = Object.values(this.uniqueWords);
     let timeIndex = 0;
     // Iterate through all time-sentence maps
@@ -80,7 +81,7 @@ class WordTimeClusterReport {
             // Get the time/cluster position
             const clusterPosition = this.calculatePercentage(
               0,
-              maxCluster,
+              this.maxCluster,
               uniqueWord.count
             );
 
@@ -113,20 +114,30 @@ class WordTimeClusterReport {
   /**
    *
    */
-  print(matrix = this.matrix) {
-    // Define the grayscale characters
-    const grayscaleChars = [' ', '.', ':', '-', '=', '+', '*', '#', '%', '@'];
+  toPng(matrix = this.matrix, outputPath = 'tmp/greyscale.png') {
+    // Define image dimensions based on matrix size
+    const width = matrix.size()[1];
+    const height = matrix.size()[0];
 
-    // Iterate over the matrix and print grayscale map
-    for (let i = 0; i < matrix.size()[0]; i++) {
-      let row = '';
-      for (let j = 0; j < matrix.size()[1]; j++) {
-        const value = math.subset(matrix, math.index(i, j));
-        const grayscaleIndex = Math.floor(value * grayscaleChars.length);
-        row += value;
+    // Create a new PNG instance
+    const png = new PNG({ width, height });
+
+    // Iterate over the matrix and set grayscale pixel values in the PNG image
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const value = math.subset(matrix, math.index(y, x)) / this.maxCluster;
+        const intensity = Math.floor(value * 255);
+        const idx = (width * y + x) << 2; // Calculate the index of the pixel in the PNG buffer
+        png.data[idx] = intensity; // Red channel
+        png.data[idx + 1] = intensity; // Green channel
+        png.data[idx + 2] = intensity; // Blue channel
+        png.data[idx + 3] = 255; // Alpha channel (fully opaque)
       }
-      console.log(row);
     }
+
+    // Save the PNG image to a file
+    const writableStream = fs.createWriteStream(outputPath);
+    png.pack().pipe(writableStream);
   }
 }
 
@@ -142,6 +153,6 @@ const report = new WordTimeClusterReport(
   ],
   [0, 1, 2, 3, 4, 5]
 );
-report.print();
+report.toPng();
 
 module.exports = WordTimeClusterReport;
