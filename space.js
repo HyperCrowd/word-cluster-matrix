@@ -135,9 +135,16 @@ class WordTimeClusterReport {
       }
     }
 
-    // Save the PNG image to a file
     const writableStream = fs.createWriteStream(outputPath);
-    png.pack().pipe(writableStream);
+
+    return new Promise((resolve) => {
+      writableStream.on('finish', () => {
+        resolve(); // Resolve the promise when the stream finishes
+      });
+
+      // Save the PNG image to a file
+      png.pack().pipe(writableStream);
+    });
   }
 }
 
@@ -153,6 +160,11 @@ const report = new WordTimeClusterReport(
   ],
   [0, 1, 2, 3, 4, 5]
 );
-report.toPng();
+
+async function main() {
+  await report.toPng();
+}
+
+main();
 
 module.exports = WordTimeClusterReport;
