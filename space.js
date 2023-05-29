@@ -13,13 +13,14 @@ class WordTimeClusterReport {
       throw new RangeError('Words must be the same length as times');
     }
 
-    const minTime = math.min(times);
-    const maxTime = math.max(times);
-    let maxCluster = 0;
-
     this.timeSentenceMap = new Array(100);
     this.uniqueWords = {};
     this.uniqueWordSentencePosition = {};
+
+    const minTime = math.min(times);
+    const maxTime = math.max(times);
+
+    let maxCluster = 0;
 
     // Prepare word-sentence indexes
     let sentenceIndex = 0;
@@ -57,7 +58,15 @@ class WordTimeClusterReport {
 
       this.timeSentenceMap[timeIndex].push(sentenceIndex);
 
-      i += 1;
+      sentenceIndex += 1;
+    }
+
+    this.matrixSnapshots = [];
+    let sliceIndex = 0;
+    for (const timeSentence of this.timeSentenceMap) {
+      for (const slice of this.timeSentenceMap.slice(0, sliceIndex)) {
+      }
+      sliceIndex += 1;
     }
   }
 
