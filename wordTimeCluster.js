@@ -138,7 +138,7 @@ class WordTimeClusterReport {
         png.data[idx + 1] = intensity; // Green channel
         png.data[idx + 2] = intensity; // Blue channel
         png.data[idx + 3] = 255; // Alpha channel (fully opaque)
-      }
+      } 
     }
 
     const writableStream = fs.createWriteStream(outputPath);
