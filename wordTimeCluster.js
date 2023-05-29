@@ -14,10 +14,11 @@ class WordTimeClusterReport {
     if (sentences.length !== times.length) {
       throw new RangeError('Words must be the same length as times');
     }
- 
+
     this.timeSentenceMap = new Array(101);
     this.uniqueWords = {};
     this.maxCluster = 0;
+    this.maxMatrixValue = 0;
 
     const minTime = math.min(times);
     const maxTime = math.max(times);
@@ -91,6 +92,10 @@ class WordTimeClusterReport {
               math.index(timeIndex, clusterPosition)
             );
 
+            if (value + 1 > this.maxMatrixValue) {
+              this.maxMatrixValue = value + 1;
+            }
+
             this.matrix = math.subset(
               this.matrix,
               math.index(timeIndex, clusterPosition),
@@ -125,7 +130,8 @@ class WordTimeClusterReport {
     // Iterate over the matrix and set grayscale pixel values in the PNG image
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        const value = math.subset(matrix, math.index(y, x)) / this.maxCluster;
+        const value =
+          math.subset(matrix, math.index(y, x)) / this.maxMatrixValue;
         const intensity = Math.floor(value * 255);
         const idx = (width * y + x) << 2; // Calculate the index of the pixel in the PNG buffer
         png.data[idx] = intensity; // Red channel
