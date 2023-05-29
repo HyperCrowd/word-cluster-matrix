@@ -13,9 +13,8 @@ class WordTimeClusterReport {
       throw new RangeError('Words must be the same length as times');
     }
 
-    this.timeSentenceMap = new Array(100);
+    this.timeSentenceMap = new Array(101);
     this.uniqueWords = {};
-    this.uniqueWordSentencePosition = {};
 
     const minTime = math.min(times);
     const maxTime = math.max(times);
@@ -61,12 +60,45 @@ class WordTimeClusterReport {
       sentenceIndex += 1;
     }
 
-    this.matrixSnapshots = [];
-    let sliceIndex = 0;
+    // Prepare cluster distribution matrix
+    this.matrix = math.zeros(101, 101);
+    const uniqueWords = Object.values(this.uniqueWords);
+    let timeIndex = 0;
+    // Iterate through all time-sentence maps
     for (const timeSentence of this.timeSentenceMap) {
-      for (const slice of this.timeSentenceMap.slice(0, sliceIndex)) {
+      if (timeSentence === undefined) {
+        timeIndex += 1;
+        continue;
       }
-      sliceIndex += 1;
+
+      // Iterate through each sentence in the time map
+      for (const sentenceIndex of timeSentence) {
+        // Iterate through every unique word
+        for (const uniqueWord of uniqueWords) {
+          // Select words that appear in this sentence
+          if (uniqueWord.sentences.indexOf(sentenceIndex) > -1) {
+            // Get the time/cluster position
+            const clusterPosition = this.calculatePercentage(
+              0,
+              maxCluster,
+              uniqueWord.count
+            );
+
+            // Iterate the time/cluster
+            const value = math.subset(
+              this.matrix,
+              math.index(timeIndex, clusterPosition)
+            );
+
+            this.matrix = math.subset(
+              this.matrix,
+              math.index(timeIndex, clusterPosition),
+              value + 1
+            );
+          }
+        }
+      }
+      timeIndex += 1;
     }
   }
 
@@ -76,6 +108,25 @@ class WordTimeClusterReport {
   calculatePercentage(start, end, position) {
     const percentage = ((position - start) / (end - start)) * 100;
     return Math.floor(percentage);
+  }
+
+  /**
+   *
+   */
+  print(matrix = this.matrix) {
+    // Define the grayscale characters
+    const grayscaleChars = [' ', '.', ':', '-', '=', '+', '*', '#', '%', '@'];
+
+    // Iterate over the matrix and print grayscale map
+    for (let i = 0; i < matrix.size()[0]; i++) {
+      let row = '';
+      for (let j = 0; j < matrix.size()[1]; j++) {
+        const value = math.subset(matrix, math.index(i, j));
+        const grayscaleIndex = Math.floor(value * grayscaleChars.length);
+        row += value;
+      }
+      console.log(row);
+    }
   }
 }
 
@@ -91,6 +142,6 @@ const report = new WordTimeClusterReport(
   ],
   [0, 1, 2, 3, 4, 5]
 );
-console.log(report);
+report.print();
 
 module.exports = WordTimeClusterReport;
