@@ -15,7 +15,7 @@ module.exports = function (numbers) {
   }
 
   return {
-    maxima: maximaCount,
-    minima: minimaCount
+    localMaximaPeaks: maximaCount,
+    localMinimaPeaks: minimaCount
   }
 }
