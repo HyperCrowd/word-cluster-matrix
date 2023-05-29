@@ -10,7 +10,7 @@ async function main() {
     times.push(i);
   }
   const report = new WordTimeClusterReport(sentences, times);
-
+  console.log(sentences);
   await report.toPng();
 }
 
