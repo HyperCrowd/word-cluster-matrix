@@ -18,6 +18,6 @@ An important premise of psychosecurity is the idea that publicly-detectable word
 
 The following image highlights these points:
 
-![images/example.png]
+![images/example.png](images/example.png)
 
 [Please see the tests](tests/wordspace.js) for an example of how to use this package.
