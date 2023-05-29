@@ -1,6 +1,7 @@
 const math = require('mathjs'); // Import a math library for matrix operations
 const natural = require('natural');
 const { removeStopwords } = require('stopword');
+const pluralize = require('pluralize');
 const { PNG } = require('pngjs');
 const fs = require('fs');
 
@@ -29,11 +30,17 @@ class WordTimeClusterReport {
     for (const sentence of sentences) {
       const words = removeStopwords(tokenizer.tokenize(sentence.toLowerCase()));
 
-      for (const word of words) {
+      for (const baseWord of words) {
+        if (baseWord === '') {
+          continue
+        }
+
+        const word = pluralize.singular(baseWord)
         if (this.uniqueWords[word] === undefined) {
           this.uniqueWords[word] = {
             count: 0,
             sentences: [],
+            word
           };
         }
 
@@ -69,6 +76,7 @@ class WordTimeClusterReport {
     // Iterate through all time-sentence maps
     for (const timeSentence of this.timeSentenceMap) {
       if (timeSentence === undefined) {
+        // No time index found here, move on
         timeIndex += 1;
         continue;
       }
@@ -119,7 +127,7 @@ class WordTimeClusterReport {
   /**
    *
    */
-  toPng(matrix = this.matrix, outputPath = 'tmp/greyscale.png') {
+  toPng(outputPath, matrix = this.matrix) {
     // Define image dimensions based on matrix size
     const width = matrix.size()[1];
     const height = matrix.size()[0];
@@ -131,7 +139,7 @@ class WordTimeClusterReport {
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         const value =
-          math.subset(matrix, math.index(y, x)) / this.maxMatrixValue;
+          math.subset(matrix, math.index(x, y)) / this.maxMatrixValue;
         const intensity = Math.floor(value * 255);
         const idx = (width * y + x) << 2; // Calculate the index of the pixel in the PNG buffer
         png.data[idx] = intensity; // Red channel

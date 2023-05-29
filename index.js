@@ -1,5 +1,8 @@
 const epsilon = 5e-324;
 
+// @TODO: Trash all this since Kalman requires assumptions of linearity
+
+/*
 class StateSpaceModel {
   constructor(A, C, Q, R, initialState, initialCovariance) {
     this.A = A; // State transition matrix
@@ -242,3 +245,4 @@ model.update(observation);
 
 console.log('Predicted state:', prediction.state.toString());
 console.log('Updated state:', model.state.toString());
+*/

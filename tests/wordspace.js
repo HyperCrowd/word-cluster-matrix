@@ -10,8 +10,8 @@ async function main() {
     times.push(i);
   } 
   const report = new WordTimeClusterReport(sentences, times);
-  console.log(report);
-  await report.toPng();
+
+  await report.toPng('images/greyscale.png');
 }
 
 main();
