@@ -8,7 +8,7 @@ async function main() {
   for (let i = 0; i < 100; i++) {
     sentences.push(sentence());
     times.push(i);
-  }
+  } 
   const report = new WordTimeClusterReport(sentences, times);
   console.log(report);
   await report.toPng();
