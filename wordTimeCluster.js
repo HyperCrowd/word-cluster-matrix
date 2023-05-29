@@ -14,7 +14,7 @@ class WordTimeClusterReport {
     if (sentences.length !== times.length) {
       throw new RangeError('Words must be the same length as times');
     }
-
+ 
     this.timeSentenceMap = new Array(101);
     this.uniqueWords = {};
     this.maxCluster = 0;
