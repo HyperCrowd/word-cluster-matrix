@@ -1,6 +1,6 @@
 # Word Cluster Matrix
 
-[An important premise of psychosecurity(https://github.com/PsySecGroup/foundation) is the idea that publicly-detectable word usage can be used as events to infer when people are influenced by state actors, egregores, trends, cults, AIs, and advertising campaigns.  The Word Cluster Matrix uses [math.js](https://mathjs.org/docs/datatypes/matrices.html) to generate matrixes of the following properties:
+[An important premise of psychosecurity](https://github.com/PsySecGroup/foundation) is the idea that publicly-detectable word usage can be used as events to infer when people are influenced by state actors, egregores, trends, cults, AIs, and advertising campaigns.  The Word Cluster Matrix uses [math.js](https://mathjs.org/docs/datatypes/matrices.html) to generate matrixes of the following properties:
 
 * X is time percentage.  
   * Messages need to be associated with a date of creation and should be absolute units of time (Such as UNIX milliseconds).
