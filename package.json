@@ -8,6 +8,7 @@
     "mathjs": "^11.8.0",
     "natural": "^6.3.1",
     "pngjs": "^7.0.0",
-    "stopword": "^2.0.8"
+    "stopword": "^2.0.8",
+    "txtgen": "^3.0.5"
   }
 }
