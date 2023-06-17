@@ -28,6 +28,10 @@ class WordTimeClusterReport {
     let sentenceIndex = 0;
 
     for (const sentence of sentences) {
+      if (sentence === undefined) {
+        continue
+      }
+
       const words = removeStopwords(tokenizer.tokenize(sentence.toLowerCase()));
 
       for (const baseWord of words) {
@@ -58,6 +62,10 @@ class WordTimeClusterReport {
     // Prepare time-sentence indexes
     sentenceIndex = 0;
     for (const time of times) {
+      if (time === undefined) {
+        continue
+      }
+
       const timeIndex = this.calculatePercentage(minTime, maxTime, time);
 
       if (this.timeSentenceMap[timeIndex] === undefined) {
