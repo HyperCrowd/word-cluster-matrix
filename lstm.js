@@ -64,6 +64,5 @@ a.feed()
 const result = a.forecast()
 console.log(result)
 
-
 new Predict(102, 102, )
 module.exports = Predict

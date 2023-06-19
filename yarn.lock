@@ -1057,11 +1057,6 @@ tunnel-agent@^0.6.0:
   dependencies:
     safe-buffer "^5.0.1"
 
-txtgen@^3.0.5:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/txtgen/-/txtgen-3.0.5.tgz#ecd66cd59194f4b2e21942b2f696793b2aadd0ea"
-  integrity sha512-b63LwLNsQF/vkfCwKxIXpj3qngoSmQZh2dXEA1dRgTMrtikgxZcDmTcQTTCyBRecNPHdkzvQ6StFJrkawgK8Ug==
-
 typed-function@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/typed-function/-/typed-function-4.1.0.tgz#da4bdd8a6d19a89e22732f75e4a410860aaf9712"
