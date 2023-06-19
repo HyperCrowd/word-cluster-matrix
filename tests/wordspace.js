@@ -14,7 +14,7 @@ async function main() {
   const report = new WordTimeClusterReport(sentences, times);
 
   await report.toPng('images/greyscale.png');
-  // loadElon()  // You need my local elonmusk.csv to run this :(
+  loadElon()  // You need my local elonmusk.csv to run this :(
 }
 
 async function loadElon () {
@@ -55,11 +55,12 @@ async function loadElon () {
     const report = new WordTimeClusterReport(years[year].sentences, years[year].times)
     await report.toPng(`images/${year} - elonmusk.png`);
   }
-
-    for (const dayOfWeek of Object.keys(daysOfWeek)) {
+/*
+  for (const dayOfWeek of Object.keys(daysOfWeek)) {
     const report = new WordTimeClusterReport(daysOfWeek[dayOfWeek].sentences, daysOfWeek[dayOfWeek].times)
     await report.toPng(`images/${weekDays[dayOfWeek]} - elonmusk.png`);
   }
+*/
 }
 
 main();

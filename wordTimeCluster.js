@@ -4,11 +4,21 @@ const { removeStopwords } = require('stopword');
 const pluralize = require('pluralize');
 const { PNG } = require('pngjs');
 const fs = require('fs');
-// const Jimp = require('jimp');
 
 const tokenizer = new natural.WordTokenizer();
 
+const maxSize = 101
+
+const colorMappings = [
+  { temperature: 0, color: [0, 0, 0] },         // Black for lowest temperature
+  { temperature: 0.25, color: [0, 0, 255] },    // Blue for low temperature
+  { temperature: 0.5, color: [0, 255, 255] },   // Cyan for medium temperature
+  { temperature: 0.75, color: [255, 255, 0] },  // Yellow for high temperature
+  { temperature: 1, color: [255, 0, 0] },       // Red for highest temperature
+];
+
 class WordTimeClusterReport {
+
   /**
    *
    */
@@ -17,11 +27,17 @@ class WordTimeClusterReport {
       throw new RangeError('Words must be the same length as times');
     }
 
-    this.timeSentenceMap = new Array(101);
+    this.timeSentenceMap = new Array(maxSize);
     this.uniqueWords = {};
     this.maxCluster = 0;
     this.maxMatrixValue = 0;
+    this.calculate(sentences, times)
+  }
 
+  /**
+   *
+   */
+  calculate (sentences = [], times = []) {
     const minTime = math.min(times);
     const maxTime = math.max(times);
 
@@ -84,7 +100,7 @@ class WordTimeClusterReport {
     }
 
     // Prepare cluster distribution matrix
-    this.matrix = math.sparse(math.zeros(101, 101));
+    this.matrix = math.sparse(math.zeros(maxSize, maxSize));
 
     const uniqueWords = Object.values(this.uniqueWords);
     let timeIndex = 0;
@@ -119,6 +135,7 @@ class WordTimeClusterReport {
             );
 
             const nextValue = value + 1
+
             if (nextValue > this.maxMatrixValue) {
               this.maxMatrixValue = nextValue;
             }
@@ -146,7 +163,7 @@ class WordTimeClusterReport {
   /**
    *
    */
-  toPng(outputPath, matrix = this.matrix) {
+  toPng(outputPath, isGreyscale = true, matrix = this.matrix) {
     // Define image dimensions based on matrix size
     const width = matrix.size()[1];
     const height = matrix.size()[0];
@@ -159,12 +176,34 @@ class WordTimeClusterReport {
       for (let x = 0; x < width; x++) {
         const value =
           math.subset(matrix, math.index(x, y)) / this.maxMatrixValue;
-        const intensity = Math.floor(value * 255);
-        const idx = (width * y + x) << 2; // Calculate the index of the pixel in the PNG buffer
-        png.data[idx] = intensity; // Red channel
-        png.data[idx + 1] = intensity; // Green channel
-        png.data[idx + 2] = intensity; // Blue channel
-        png.data[idx + 3] = 255; // Alpha channel (fully opaque)
+
+        if (isGreyscale === false) {
+          // Thermal iridescence
+          let color = [];
+          for (let i = 1; i < colorMappings.length; i++) {
+            if (value <= colorMappings[i].temperature) {
+              const prevColor = colorMappings[i - 1].color;
+              const nextColor = colorMappings[i].color;
+              const t = (value - colorMappings[i - 1].temperature) / (colorMappings[i].temperature - colorMappings[i - 1].temperature);
+              color = this.interpolateColors(prevColor, nextColor, t);
+              break;
+            }
+          }
+
+          const idx = (width * y + x) << 2; // Calculate the index of the pixel in the PNG buffer
+          png.data[idx] = color[0] || 0;     // Red channel
+          png.data[idx + 1] = color[1] || 0; // Green channel
+          png.data[idx + 2] = color[2] || 0; // Blue channel
+          png.data[idx + 3] = 255;      // Alpha channel (fully opaque)
+        } else {
+          // Greyscale only
+          const intensity = Math.floor(value * 255);
+          const idx = (width * y + x) << 2; // Calculate the index of the pixel in the PNG buffer
+          png.data[idx] = intensity; // Red channel
+          png.data[idx + 1] = intensity; // Green channel
+          png.data[idx + 2] = intensity; // Blue channel
+          png.data[idx + 3] = 255; // Alpha channel (fully opaque)
+        }
       } 
     }
 
@@ -183,38 +222,12 @@ class WordTimeClusterReport {
   /**
    * 
    */
-  applyThermalIridescence(image) {
-    return image
-      .scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
-        const red = this.bitmap.data[idx + 0];
-        const green = this.bitmap.data[idx + 1];
-        const blue = this.bitmap.data[idx + 2];
-        
-        // Apply thermal iridescence effect
-        const average = (red + green + blue) / 3;
-        this.bitmap.data[idx + 0] = average; // Red
-        this.bitmap.data[idx + 1] = average; // Green
-        this.bitmap.data[idx + 2] = average; // Blue
-      });
+  interpolateColors(color1, color2, t) {
+    const r = Math.round(color1[0] + (color2[0] - color1[0]) * t);
+    const g = Math.round(color1[1] + (color2[1] - color1[1]) * t);
+    const b = Math.round(color1[2] + (color2[2] - color1[2]) * t);
+    return [r, g, b];
   }
-
-  /**
-// Read the input image
-Jimp.read('input.png')
-  .then(image => {
-    // Apply thermal iridescence effect
-    applyThermalIridescence(image);
-    
-    // Save the modified image
-    return image.writeAsync('output.png');
-  })
-  .then(() => {
-    console.log('Image processing complete.');
-  })
-  .catch(err => {
-    console.error('An error occurred:', err);
-  });
-*/
 }
 
 module.exports = WordTimeClusterReport;
