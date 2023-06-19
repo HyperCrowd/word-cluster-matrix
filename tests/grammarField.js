@@ -40,15 +40,8 @@ async function main() {
   for (const year of Object.keys(years)) {
     const field = new GrammarField(years[year].sentences, years[year].times)
     await field.toPng(`images/${year}.elonmusk.png`);
-    await field.generateFeatures(`images/${year}.features.elonmusk.png`)
+    await field.generateFrequencyFeatures(`images/${year}.generateFrequencyFeatures.elonmusk.png`, true)
   }
-
-/*
-  for (const dayOfWeek of Object.keys(daysOfWeek)) {
-    const field = new GrammarField(daysOfWeek[dayOfWeek].sentences, daysOfWeek[dayOfWeek].times)
-    await field.toPng(`images/${weekDays[dayOfWeek]} - elonmusk.png`);
-  }
-*/
 }
 
 main();

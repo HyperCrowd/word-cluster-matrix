@@ -32,16 +32,18 @@ class GrammarField {
     this.maxCluster = 0;
     this.maxMatrixValue = 0;
     this.matrix = math.sparse(math.zeros(maxSize, maxSize));
-    this.featureMatrix = math.sparse(math.zeros(maxSize, 14));
+    this.featureMatrix = math.sparse(math.zeros(maxSize, 21));
+
     this.calculate(sentences, times)
   }
 
   /**
    * 
    */
-  async generateFeatures (outputPath, isGreyscale = true) {
-    const width = this.matrix.size()[1];
+  async generateFrequencyFeatures (outputPath, isGreyscale = true) {
     const height = this.matrix.size()[0];
+    const width = this.matrix.size()[1];
+
     const maxFeatures = {}
     const minFeatures = {}
     const allFeatures = []
@@ -52,8 +54,7 @@ class GrammarField {
       const values = []
 
       for (let x = 0; x < width; x++) {
-        const value =
-          math.subset(this.matrix, math.index(x, y));
+        const value = this.matrix.get([y, x])
 
         values.push(value)
       }
@@ -99,11 +100,7 @@ class GrammarField {
               features[feature]
             );
 
-        this.featureMatrix = math.subset(
-          this.featureMatrix,
-          math.index(x, y),
-          distance
-        );
+        this.featureMatrix.set([y, x], distance)
 
         x += 1
       }
@@ -204,22 +201,14 @@ class GrammarField {
             );
 
             // Iterate the time/cluster
-            const value = math.subset(
-              this.matrix,
-              math.index(timeIndex, clusterPosition)
-            );
-
+            const value = this.matrix.get([clusterPosition, timeIndex])
             const nextValue = value + 1
 
             if (nextValue > this.maxMatrixValue) {
               this.maxMatrixValue = nextValue;
             }
 
-            this.matrix = math.subset(
-              this.matrix,
-              math.index(timeIndex, clusterPosition),
-              nextValue
-            );
+            this.matrix.set([clusterPosition, timeIndex], nextValue)
           }
         }
       }
@@ -240,8 +229,8 @@ class GrammarField {
    */
   toPng(outputPath, isGreyscale = true, matrix = this.matrix, needsNormalization = true) {
     // Define image dimensions based on matrix size
-    const width = matrix.size()[1];
     const height = matrix.size()[0];
+    const width = matrix.size()[1];
 
     // Create a new PNG instance
     const png = new PNG({ width, height });
@@ -250,8 +239,8 @@ class GrammarField {
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         const value = needsNormalization
-          ? math.subset(matrix, math.index(x, y)) / this.maxMatrixValue
-          : math.subset(matrix, math.index(x, y))
+          ? matrix.get([y, x]) / this.maxMatrixValue
+          : matrix.get([y, x])
 
         if (isGreyscale === false) {
           // Thermal iridescence
