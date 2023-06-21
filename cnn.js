@@ -1,4 +1,4 @@
-const tf = require('@tensorflow/tfjs');
+const tf = require('@tensorflow/tfjs-node-gpu');
 const fs = require('fs');
 const PNG = require('pngjs').PNG;
 
@@ -15,7 +15,7 @@ class CNN {
     kernelSize = 3, // Field size of pattern detection
     height = imageHeight,
     width = imageWidth,
-    channels = 1, // 1 = grayscale, 3 = RGB, 4 = RGBa
+    channels = 4, // 1 = grayscale, 3 = RGB, 4 = RGBa
     poolSize = 2, // Field size of feature aggregation (max or average)
     fullyConnectedLayers = 64,  // Number of fully connected layers
     categories = 0, // Number of categories you want to identify (this is the highest number allowed in the train() method's labels array)
@@ -45,7 +45,9 @@ class CNN {
 
     this.model.compile({
       optimizer: optimizer,
+      // optimizer: 'sgd',
       loss: 'categoricalCrossentropy',
+      // loss: 'meanSquaredError'
       metrics: ['accuracy']
     });
   }
@@ -95,7 +97,7 @@ class CNN {
         if (tensor instanceof Array) {
           tensor.map(item => result.push(item))
         } else {
-          result.push(item)
+          result.push(tensor)
         }
       }
 
@@ -117,19 +119,21 @@ class CNN {
      throw new RangeError('CNN.train lists must be the same size') 
     }
 
-    const imageTensors = await this.getTensor(imagePathOrTensorList)
+    // @TODO what a mess
+    const images = await this.getTensor(imagePathOrTensorList)
+    const imageTensors = tf.data.array(images);
+    const labelTensors = tf.data.array(labels.map(label => tf.tensor1d(label)));
 
-    // Create a training dataset
-    const trainData = tf.data.array(imagePathOrTensorList).map((imageTensor, id) => {
-      const labelTensor = tf.tensor1d([labels[id]]);
-      return { xs: imageTensor, ys: labelTensor };
-    });
+    const dataset = tf.data
+      .zip({ xs: imageTensors, ys: labelTensors })
 
     // Train the model
-    await this.model.fitDataset(trainData, {
+    await this.model.fitDataset(dataset.batch(this.batchSize), {
       epochs: this.epochs,
       batchSize: this.batchSize,
     });
+
+    return imageTensors
   }
 
   /**
