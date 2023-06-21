@@ -1,13 +1,17 @@
-# Word Cluster Matrix
+# Grammar Fields
 
-[An important premise of psychosecurity](https://github.com/PsySecGroup/foundation) is the idea that publicly-detectable word usage can be used as events to infer when people are influenced by state actors, egregores, trends, cults, AIs, and advertising campaigns.  The Word Cluster Matrix uses [math.js](https://mathjs.org/docs/datatypes/matrices.html) to generate matrixes of the following properties:
+Grammar Fields are a [psychosecurity construct](https://github.com/PsySecGroup/foundation) that accounts for linguistic home base deviations, new word acquisition, lingustic timeline, and grammar drift.
+
+We capture every bit of text a person has ever written and organize it sequentially over time. Then we calculate the frequency of go words (the opposite of stop words) and organize it as ascending values.  This creates the “grammar field” that is then examined for motion and velocity mutations.  It is designed to be neural network compatible.  From this construct, we can detect how state actors, egregores, trends, cults, AIs, and advertising campaigns affect language usage.
+
+The Grammar Field uses [math.js](https://mathjs.org/docs/datatypes/matrices.html) to generate matrixes of the following properties:
 
 * X is time percentage.  
   * Messages need to be associated with a date of creation and should be absolute units of time (Such as UNIX milliseconds).
   * They sequence of time can be repeating and unordered as long as their index corresponds to the index of the message the time is representing.
   * Each X of the matrix, from left to right, is a percentage of time between the lowest and highest times.
   * There are 100 X pixels.
-* Y is the cluster volume percentage.
+* Y is the word frequency cluster volume percentage.
   * The words within messages are extracted to their singular form and then their uniqueness is counted.
   * Words with near similar frequency distributions are considered a cluster
   * The index of the message should be identical to the timestamp of when that message appeared.
@@ -29,6 +33,6 @@ Upon examining this image, we see:
 
 A signature like this means someone is operating like a message bot using dynamic string replacement!
 
-[Please see the tests](tests/wordspace.js) for an example of how to use this package.
+[Please see the tests](tests) for an example of how to use this package.
 
-I'll be trying to get this package into ML/AI pipelines via [GPU.js](https://gpu.rocks/#/) soon!
+Tensorflow.js (Node GPU variant) is currently integrated, but not working.  Hang tight, folks!
