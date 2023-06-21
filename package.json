@@ -2,11 +2,10 @@
   "name": "node-starter",
   "version": "0.0.0",
   "scripts": {
-    "test": "node tests/grammarField.js"
+    "test": "node tests/index.js"
   },
   "dependencies": {
-    "brain.js": "^2.0.0-beta.23",
-    "gpu.js": "^2.16.0",
+    "@tensorflow/tfjs": "^4.8.0",
     "mathjs": "^11.8.0",
     "natural": "^6.3.1",
     "pluralize": "^8.0.0",
