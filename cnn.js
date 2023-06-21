@@ -21,18 +21,20 @@ class CNN {
     categories = 0, // Number of categories you want to identify (this is the highest number allowed in the train() method's labels array)
     learningRate = 0.001, // Speed of model adaptivity
     batchSize = 32, // Number of samples used used for each teach training iteration
-    epochs = 10 // Number of times to go through the entire training set
+    epochs = 3 // Number of times to go through the entire training set
   }) {
     this.model = tf.sequential();
     this.epochs = epochs
     this.batchSize = batchSize
+    this.height = height
+    this.width = width
 
     // Define the model architecture
     this.model.add(tf.layers.conv2d({
       filters,
       kernelSize,
       activation: 'relu',
-      inputShape: [height, width, channels]
+      inputShape: [height, width, channels],
     }));
 
     this.model.add(tf.layers.maxPooling2d({ poolSize }));
@@ -110,7 +112,7 @@ class CNN {
   /**
    * The highest number in the labels array should be the constructor's { categorizes } value - 1
    */
-  async train (imagePathOrTensorList, labels) {
+  async train (imagePathOrTensorList, labels, verbose = false) {
     if (!(imagePathOrTensorList instanceof Array) || !(labels instanceof Array)) {
       throw new RangeError('CNN.train only takes arrays of image paths or image tensor instances')
     }
@@ -119,21 +121,21 @@ class CNN {
      throw new RangeError('CNN.train lists must be the same size') 
     }
 
-    // @TODO what a mess
     const images = await this.getTensor(imagePathOrTensorList)
     const imageTensors = tf.data.array(images);
-    const labelTensors = tf.data.array(labels.map(label => tf.tensor1d(label)));
+    const labelTensors = tf.data.array(labels.map(label => tf.tensor1d(label, 'int32')));
 
-    const dataset = tf.data
-      .zip({ xs: imageTensors, ys: labelTensors })
+    const dataset = tf.data.zip({ xs: imageTensors, ys: labelTensors })
+    //
 
     // Train the model
     await this.model.fitDataset(dataset.batch(this.batchSize), {
+      verbose,
       epochs: this.epochs,
       batchSize: this.batchSize,
     });
 
-    return imageTensors
+    return images
   }
 
   /**
@@ -141,7 +143,8 @@ class CNN {
    */
   async predict (imagePathOrTensor) {
     const imageTensor = await this.getTensor(imagePathOrTensor)
-    const predictions = this.model.predict(imageTensor);
+    // const preparedImageTensor = imageTensor.reshape(this.batchSize, this.height, this.width, this.channels)
+    const predictions = this.model.predict(imageTensor.expandDims());
     return predictions
   }
 

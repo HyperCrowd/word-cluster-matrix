@@ -25,8 +25,9 @@ async function main() {
 	})
 
 	const images = await cnn.train(Object.keys(trainingData), labels)
-	console.log(images.take(0))
-	console.log(await cnn.predict(images[0]))
+	const predictions = await cnn.predict(images[1])
+	const closest = predictions.argMax().dataSync()[0]
+	console.log(closest)
 }
 
 main();

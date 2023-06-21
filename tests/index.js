@@ -1,2 +1,2 @@
-//require('./grammarField')
+require('./grammarField')
 require('./cnn')
