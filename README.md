@@ -35,4 +35,4 @@ A signature like this means someone is operating like a message bot using dynami
 
 [Please see the tests](tests) for an example of how to use this package.
 
-Tensorflow.js (Node GPU variant) is currently integrated, but not working.  Hang tight, folks!
+Tensorflow.js ([Node GPU variant](https://github.com/tensorflow/tfjs/blob/master/tfjs-node/README.md)) is [currently integrated and use grammar fields to be trained](tests/cnn.js)!
