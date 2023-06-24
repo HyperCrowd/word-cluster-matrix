@@ -39,8 +39,6 @@ Tensorflow.js ([Node GPU variant](https://github.com/tensorflow/tfjs/blob/master
 
 This presentation about Grammar Fields will help you understand their underlying principles.
 
-<center>
 [![Grammar Fields](https://img.youtube.com/vi/EL542ohNCQ4/1.jpg)](https://www.youtube.com/watch?v=EL542ohNCQ4)
-</center>
 
 You can review the slides in this presentation [here](https://docs.google.com/presentation/d/1cKFFKLI95ioDlW_fxtHoReWlriK5LSDhbhQfQtRQGD4/edit?usp=sharing)
