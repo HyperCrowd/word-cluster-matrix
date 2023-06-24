@@ -39,6 +39,6 @@ Tensorflow.js ([Node GPU variant](https://github.com/tensorflow/tfjs/blob/master
 
 This presentation about Grammar Fields will help you understand their underlying principles.
 
-[![Grammar Fields](https://github.com/HyperCrowd/word-cluster-matrix/assets/76200774/4a2ca3b6-a2b7-45e3-82e0-2a8dcb86e263)](https://www.youtube.com/watch?v=EL542ohNCQ4)
+[![Grammar Fields](https://img.youtube.com/vi/EL542ohNCQ4/0.jpg)](https://www.youtube.com/watch?v=EL542ohNCQ4)
 
 You can review the slides in this presentation [here](https://docs.google.com/presentation/d/1cKFFKLI95ioDlW_fxtHoReWlriK5LSDhbhQfQtRQGD4/edit?usp=sharing)
