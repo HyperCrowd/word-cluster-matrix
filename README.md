@@ -1,44 +1,54 @@
 # Grammar Fields
 
-Grammar Fields are a [psychosecurity construct](https://github.com/PsySecGroup/foundation) that accounts for linguistic home base deviations, new word acquisition, lingustic timeline, and grammar drift.
+Grammar Fields are a [psychosecurity construct](https://github.com/PsySecGroup/foundation) used for analyzing grammar behavior and language usage over time, with a focus on deviations from the norm, the acquisition of new words, the evolution of grammar, and the passage of time in linguistic development.
 
-We capture every bit of text a person has ever written and organize it sequentially over time. Then we calculate the frequency of go words (the opposite of stop words) and organize it as ascending values.  This creates the “grammar field” that is then examined for motion and velocity mutations.  It is designed to be neural network compatible.  From this construct, we can detect how state actors, egregores, trends, cults, AIs, and advertising campaigns affect language usage.
-
-The Grammar Field uses [math.js](https://mathjs.org/docs/datatypes/matrices.html) to generate matrixes of the following properties:
-
-* X is time percentage.  
-  * Messages need to be associated with a date of creation and should be absolute units of time (Such as UNIX milliseconds).
-  * They sequence of time can be repeating and unordered as long as their index corresponds to the index of the message the time is representing.
-  * Each X of the matrix, from left to right, is a percentage of time between the lowest and highest times.
-  * There are 100 X pixels.
-* Y is the word frequency cluster volume percentage.
-  * The words within messages are extracted to their singular form and then their uniqueness is counted.
-  * Words with near similar frequency distributions are considered a cluster
-  * The index of the message should be identical to the timestamp of when that message appeared.
-  * Each Y of the matrix, from top to bottom, is a percentage of cluster volume between the smallest and the largest cluster volumes.
-  * There are 100 Y pixels
-* Each X and Y intersection represents a cluster point
-  * The brightness of the cluster point corresponds to its proximity to the largest value in the matrix.
-  * The darkness of a cluster point corresponds to its distance from the largestvalue in the matrix
-
-The following image highlights these points:
-
-![images/example.png](images/example.png)
-
-Upon examining this image, we see:
-
-* Spattering of low frequency word clustering throughout the message timeline
-* Complete emptiness of average frequency word clustering
-* Extreme intensity and reuse of high frequency word clustering throughout the entire message timeline
-
-A signature like this means someone is operating like a message bot using dynamic string replacement!
-
-[Please see the tests](tests) for an example of how to use this package.
-
-Tensorflow.js ([Node GPU variant](https://github.com/tensorflow/tfjs/blob/master/tfjs-node/README.md)) is [currently integrated and use grammar fields to be trained](tests/cnn.js)!
+To analyze language, we collect and organize all the text that a person has written, arranging it chronologically. We then determine the frequency of "go words" (words that are actively used) and arrange them in ascending order. This compilation forms the basis of the "grammar field," which is then examined for changes in patterns and the speed at which these changes occur. The goal is to make it compatible with neural networks to detect how various factors such as influential individuals, trends, cults, artificial intelligence, and advertising campaigns impact language usage.
 
 This presentation about Grammar Fields will help you understand their underlying principles.
 
 [![Grammar Fields](https://img.youtube.com/vi/EL542ohNCQ4/0.jpg)](https://www.youtube.com/watch?v=EL542ohNCQ4)
 
 You can review the slides in this presentation [here](https://docs.google.com/presentation/d/1cKFFKLI95ioDlW_fxtHoReWlriK5LSDhbhQfQtRQGD4/edit?usp=sharing)
+
+## Technical Definition
+
+To create the Grammar Field, we employ [math.js](https://mathjs.org/docs/datatypes/matrices.html) to generate matrices with the following properties:
+
+* The X-axis represents time as a percentage.
+  * Each message needs to have an associated creation date, represented in absolute time units (e.g., UNIX milliseconds).
+  * The sequence of time can be repetitive and unordered as long as the index aligns with the message's corresponding timestamp.
+  * Each point on the X-axis corresponds to a percentage of time between the earliest and latest timestamps.
+  * The X-axis has 100 pixels.
+* The Y-axis represents the percentage of word frequency clusters.
+  * Words within messages are transformed into their singular forms, and we count their uniqueness.
+  * Words with similar frequency distributions are grouped together as a cluster.
+  * Each point on the Y-axis represents a percentage of the cluster volume, ranging from the rarest cluster occurrence to the most frequent cluster occurrence.
+  * The Y-axis has 100 pixels.
+* Each intersection of X and Y coordinates represents a cluster point.
+  * Brightness indicates its proximity to the highest value in the field.
+  * Drkness represents its distance from the highest value.
+
+## Example
+
+The following image highlights these points:
+
+![images/example.png](images/example.png)
+
+These are the annual grammar fields of Elon Musk between 2015 and 2017
+
+We see a slurring effect happening to his grammar fields after Trump was elected.
+
+We also see that by 2017, his usage of rare words increases significantly since 2015.
+
+Additional forernsics these specific clusters will help us identify what egregores Elon was influenced by.
+
+## Usage
+
+```
+npm install github:HyperCrowd/word-cluster-matrix
+```
+
+[Please see the tests](tests) for an example of how to use this package.
+
+Tensorflow.js ([Node GPU variant](https://github.com/tensorflow/tfjs/blob/master/tfjs-node/README.md)) is [currently integrated and use grammar fields to be trained](tests/cnn.js)!
+
