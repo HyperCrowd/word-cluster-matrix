@@ -36,3 +36,9 @@ A signature like this means someone is operating like a message bot using dynami
 [Please see the tests](tests) for an example of how to use this package.
 
 Tensorflow.js ([Node GPU variant](https://github.com/tensorflow/tfjs/blob/master/tfjs-node/README.md)) is [currently integrated and use grammar fields to be trained](tests/cnn.js)!
+
+This presentation about Grammar Fields will help you understand their underlying principles.
+
+[![Grammar Fields](https://github.com/HyperCrowd/word-cluster-matrix/assets/76200774/4a2ca3b6-a2b7-45e3-82e0-2a8dcb86e263)](https://www.youtube.com/watch?v=EL542ohNCQ4)
+
+You can review the slides in this presentation [here](https://docs.google.com/presentation/d/1cKFFKLI95ioDlW_fxtHoReWlriK5LSDhbhQfQtRQGD4/edit?usp=sharing)
