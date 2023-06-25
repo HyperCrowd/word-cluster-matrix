@@ -40,7 +40,7 @@ We see a slurring effect happening to his grammar fields after Trump was elected
 
 We also see that by 2017, his usage of rare words increases significantly since 2015.
 
-Additional forernsics will reveal these clusters can help us identify what egregores Elon was influenced by.
+Additional forensics will reveal these clusters can help us identify what egregores Elon was influenced by.
 
 ## Usage
 
