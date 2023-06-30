@@ -38,78 +38,6 @@ class GrammarField {
   }
 
   /**
-   * 
-   */
-  async generateFrequencyFeatures (outputPath, isGreyscale = true) {
-    const height = this.matrix.size()[0];
-    const width = this.matrix.size()[1];
-
-    const maxFeatures = {}
-    const minFeatures = {}
-    const allFeatures = []
-
-    // Iterate over the matrix and generate features for each frequency cluster
-    for (let y = 0; y < height; y++) {
-
-      const values = []
-
-      for (let x = 0; x < width; x++) {
-        const value = this.matrix.get([y, x])
-
-        values.push(value)
-      }
-
-      const features = getFeatures(values, true)
-      allFeatures[y] = features
-
-      for (const feature of Object.keys(features)) {
-        const value = features[feature]
-
-        if (maxFeatures[feature] === undefined) {
-          maxFeatures[feature] = value
-        }
-
-        if (minFeatures[feature] === undefined) {
-          minFeatures[feature] = value
-        }
-
-        if (value > maxFeatures[feature]) {
-          maxFeatures[feature] = value
-        }
-
-        if (value < minFeatures[feature]) {
-          minFeatures[feature] = value
-        }
-      }
-    }
-
-    // Calculate features gradients
-    //   rows are features
-    //   columns are time
-
-    for (let y = 0; y < height; y++) {
-      const features = allFeatures[y]
-      let x = 0
-
-      for (const feature of Object.keys(features)) {
-        const distance = maxFeatures[feature] - minFeatures[feature] === 0
-          ? 0
-          :  this.calculatePercentage(
-              minFeatures[feature],
-              maxFeatures[feature],
-              features[feature]
-            );
-
-        this.featureMatrix.set([y, x], distance)
-
-        x += 1
-      }
-    }
-
-    return this.toPng(outputPath, isGreyscale, this.featureMatrix, false)
-  }
-
-  /**
    *
    */
   calculate (sentences = [], times = []) {
@@ -225,6 +153,78 @@ class GrammarField {
   }
 
   /**
+   * 
+   */
+  async generateFrequencyFeatures (outputPath, isGreyscale = true) {
+    const height = this.matrix.size()[0];
+    const width = this.matrix.size()[1];
+
+    const maxFeatures = {}
+    const minFeatures = {}
+    const allFeatures = []
+
+    // Iterate over the matrix and generate features for each frequency cluster
+    for (let y = 0; y < height; y++) {
+
+      const values = []
+
+      for (let x = 0; x < width; x++) {
+        const value = this.matrix.get([y, x])
+
+        values.push(value)
+      }
+
+      const features = getFeatures(values, true)
+      allFeatures[y] = features
+
+      for (const feature of Object.keys(features)) {
+        const value = features[feature]
+
+        if (maxFeatures[feature] === undefined) {
+          maxFeatures[feature] = value
+        }
+
+        if (minFeatures[feature] === undefined) {
+          minFeatures[feature] = value
+        }
+
+        if (value > maxFeatures[feature]) {
+          maxFeatures[feature] = value
+        }
+
+        if (value < minFeatures[feature]) {
+          minFeatures[feature] = value
+        }
+      }
+    }
+
+    // Calculate features gradients
+    //   rows are features
+    //   columns are time
+
+    for (let y = 0; y < height; y++) {
+      const features = allFeatures[y]
+      let x = 0
+
+      for (const feature of Object.keys(features)) {
+        const distance = maxFeatures[feature] - minFeatures[feature] === 0
+          ? 0
+          :  this.calculatePercentage(
+              minFeatures[feature],
+              maxFeatures[feature],
+              features[feature]
+            );
+
+        this.featureMatrix.set([y, x], distance)
+
+        x += 1
+      }
+    }
+
+    return this.toPng(outputPath, isGreyscale, this.featureMatrix, false)
+  }
+
+  /**
    *
    */
   toPng(outputPath, isGreyscale = true, matrix = this.matrix, needsNormalization = true) {
@@ -292,6 +292,41 @@ class GrammarField {
     const g = Math.round(color1[1] + (color2[1] - color1[1]) * t);
     const b = Math.round(color1[2] + (color2[2] - color1[2]) * t);
     return [r, g, b];
+  }
+
+  /**
+   * 
+   */
+  createMonteCarlo () {
+    // Define the Monte Carlo simulation parameters
+    const numSamples = 10000;   // Number of samples to generate
+    const inputDim = 2;        // Dimension of the input features
+    const outputDim = 1;       // Dimension of the output/target values
+
+    // Create arrays to store the training data
+    const inputData = [];
+    const outputData = [];
+
+    // Perform the Monte Carlo simulation and generate training data
+    for (let i = 0; i < numSamples; i++) {
+      // Generate random lattice coordinates
+      const xCoord = Math.floor(Math.random() * maxSize);
+      const yCoord = Math.floor(Math.random() * maxSize);
+
+      // Convert lattice coordinates to input feature
+      // @TODO: figure out the most common patterns that appear
+      const inputFeature = [xCoord / maxSize, yCoord / maxSize];
+
+      // Calculate the corresponding output/target value
+      // @TODO: figure out what kinds of outputs are even possible?
+      const outputValue = Math.sin(xCoord) + Math.cos(yCoord);  // Example function: y = sin(x) + cos(y)
+
+      // Store the input feature and output value in the training data arrays
+      inputData.push(inputFeature);
+      outputData.push(outputValue);
+    }
+
+    // @TODO: create PNG
   }
 }
 

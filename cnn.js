@@ -84,32 +84,6 @@ class CNN {
   async imageToTensor (imagePath) {
     const buffer = fs.readFileSync(imagePath);
     return tf.node.decodeImage(buffer);
-/*
-    return new Promise((resolve, reject) => {
-        fs.createReadStream(imagePath)
-          .pipe(new PNG())
-          .on('parsed', function () {
-            const imageData = new Uint8Array(this.width * this.height * 4);
-            for (let y = 0; y < this.height; y++) {
-              for (let x = 0; x < this.width; x++) {
-                const idx = (this.width * y + x) << 2;
-                imageData[idx] = this.data[idx];         // Red channel
-                imageData[idx + 1] = this.data[idx + 1]; // Green channel
-                imageData[idx + 2] = this.data[idx + 2]; // Blue channel
-                imageData[idx + 3] = this.data[idx + 3]; // Alpha channel
-              }
-            }
-            const tensor = tf.tensor3d(imageData, [this.height, this.width, 4], 'int32');
-            // @CONFIRM: Preprocess the image if needed (e.g., normalize pixel values)
-            resolve(tensor);
-          })
-          .on('error', function (err) {
-            reject(err);
-          }
-        );
-      }
-    );
-*/
   }
 
   /**
