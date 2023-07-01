@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 function getWeek(date) {
   // Copy the date object to avoid modifying the original
   const newDate = new Date(date.getTime());
@@ -28,14 +31,10 @@ class GrammarFieldManager {
 	constructor (name, sentences = [], times = [], scopes = [GrammarFieldManager.timeScopes.HOURLY]) {
     this.name = name
     this.scopes = scopes
+    this.clusters = {}
 
-    this.clusters = {
-      [GrammarField.timeScopes.HOURLY]: {},
-      [GrammarField.timeScopes.DAY_OF_WEEK]: {},
-      [GrammarField.timeScopes.DAY_OF_MONTH]: {},
-      [GrammarField.timeScopes.WEEKLY]: {},
-      [GrammarField.timeScopes.MONTHLY]: {},
-      [GrammarField.timeScopes.YEARLY]: {}
+    for (const scope of Object.keys(GrammarFieldManager.scopes)) {
+      clusters[scope] = {}
     }
 
     for (const scope of Object.keys(this.scopes)) {
@@ -43,27 +42,38 @@ class GrammarFieldManager {
 
       for (let i = 0; i < times.length; i++) {
         const time = times[i]
-        
+        const newTime = new Date(0)
+        newTime.setMilliseconds(time.getMilliseconds())
+        newTime.setSeconds(time.getSeconds())
+        newTime.setMinutes(time.getMinutes())
+
         let index
 
         switch (this.timeScope) {
-          case GrammarField.timeScopes.HOURLY:
+          case GrammarField.scopes.HOURLY:
             index = time.getHour()
             break;
-          case GrammarField.timeScopes.DAY_OF_WEEK:
+          case GrammarField.scopes.DAY_OF_WEEK:
             index = time.getDay()
+            newTime.setHours(time.setHours())
             break;
-          case GrammarField.timeScopes.DAY_OF_MONTH:
+          case GrammarField.scopes.DAY_OF_MONTH:
             index = time.getDate()
+            newTime.setHours(time.setHours())
             break;
-          case GrammarField.timeScopes.WEEKLY:
+          case GrammarField.scopes.WEEKLY:
             index = getWeek(time)
+            newTime.setHours(time.setHours())
+            newTime.setDay(time.getDay())
             break;
-          case GrammarField.timeScopes.MONTHLY:
+          case GrammarField.scopes.MONTHLY:
             index = time.getMonth()
+            newTime.setHours(time.setHours())
+            newTime.getDate(time.setDate())
             break;
-          case GrammarField.timeScopes.YEARLY:
+          case GrammarField.scopes.YEARLY:
             index = time.getFullYear()
+            newTime.setTime(date.getTime())
             break;
         }
 
@@ -74,7 +84,7 @@ class GrammarFieldManager {
           }
 
           cluster[index].sentences.push(sentences[i])
-          cluster[index].times.push(time[i])
+          cluster[index].times.push(newTime)
         }
       }
     }
@@ -95,7 +105,7 @@ class GrammarFieldManager {
   }
 }
 
-GrammarFieldManager.timeScopes = {
+GrammarFieldManager.scopes = {
   HOURLY: 'hourly',
   DAY_OF_WEEK: 'day_of_week',
   DAY_OF_MONTH: 'day_of_month'
