@@ -9,7 +9,7 @@ const cache = {};
 /**
  * Get a sqlite database connection
  */
-module.getDb = (path) => {
+const getDb = (path) => {
   if (cache[path] === undefined) {
     ensureFileSync(path);
     cache[path] = new SqliteDatabaseConnection(path);
@@ -27,14 +27,14 @@ module.getDb = (path) => {
  *
  * @param path
  */
-module.reset = (path) => {
+const reset = (path) => {
   cache[path] = undefined;
 };
 
 /**
  * run
  */
-module.run = (db, query, parameters = undefined) => {
+const run = (db, query, parameters = undefined) => {
   const statement = db.prepare(query);
 
   if (parameters === undefined) {
@@ -51,7 +51,14 @@ module.run = (db, query, parameters = undefined) => {
  * @param db SqliteDatabaseConnection
  * @return Object[]
  */
-module.query = (db, query, parameters) => {
+const query = (db, query, parameters) => {
   const statement = db.prepare(query);
   return statement.bind(parameters).all();
 };
+
+module.exports = {
+  getDb,
+  reset,
+  query,
+  run
+}

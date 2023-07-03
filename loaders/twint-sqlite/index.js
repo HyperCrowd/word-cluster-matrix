@@ -8,8 +8,11 @@ class TwintSqlite {
 	/**
 	 * 
 	 */
-	constructor(path, autoConnect = true, autoPopulate = true) {
+	constructor (path, autoConnect = true, autoPopulate = true) {
     this.path = path;
+
+		this.text = []
+		this.times = []
 
     if (autoConnect) {
       this.connect(path);
@@ -30,7 +33,7 @@ class TwintSqlite {
 	/**
 	 * 
 	 */
-	populate() {
+	populate (verbose = false) {
     // https://github.com/twintproject/twint/blob/e7c8a0c764f6879188e5c21e25fb6f1f856a7221/twint/storage/db.py#L53
 		const tweets = query(
       this.connection,
@@ -38,11 +41,15 @@ class TwintSqlite {
       {}
     );
 
-		this.text = []
-		this.times = []
+		let i = 0
+		const singlePercent = Math.floor(tweets.length * 0.01)
 
 		tweets.forEach(row => {
-			const tweet = tweet
+			if (verbose === true && i % singlePercent === 0) {
+				console.log((i / tweets.length * 100).toFixed(2) + '%')
+			}
+
+			const tweet = row.tweet
 				.replace(uselessCharacters, '')
 				.replace(oldRetweetsRegex, '')
 
@@ -50,10 +57,9 @@ class TwintSqlite {
 
 			this.text.push(tweet)
 			this.times.push(time)
+			i += 1
 		})
 
-    
-    this.populate();
     return this;
   }
 }
